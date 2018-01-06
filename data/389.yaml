@@ -1,0 +1,247 @@
+- name: monitor
+  search: 'cn=Monitor'
+  filter: '(cn=monitor)'
+  attributes:
+    metrics:
+      threads:
+        type: gauge
+      currentconnections:
+        type: gauge
+      currentconnections:
+        type: gauge
+      totalconnections:
+        type: gauge
+      currentconnectionsatmaxthreads:
+        type: gauge
+      maxthreadsperconnhits:
+        type: gauge
+      dtablesize:
+        type: gauge
+      readwaiters:
+        type: gauge
+      opsinitiated:
+        type: counter
+      opscompleted:
+        type: counter
+      entriessent:
+        type: counter
+      bytessent:
+        type: counter
+      nbackends:
+        type: gauge
+      version:
+        metric_name: server_version
+        type: counter
+        labels: [version]
+        # only one value can ever be returned
+        translator: |
+          - labels:
+              version: {{ index .values 0 }}
+            value: 1
+      starttime: &time_conversion
+        type: gauge
+        # example is 20180103211642Z,
+        translator: |
+          {{ range $value := .values }}
+          - value: {{ (toDate . "20060102150405Z").Unix }}
+          {{ end }}
+      currenttime: *time_conversion
+      connection:
+        type: gauge
+        metric_name: connection_duration
+        labels: [id, bind]
+        # examples:
+        # connection: 95:20171129175928Z:48926:48926:-:cn=Directory Manager:0:0:0
+        # connection: 96:20180103211507Z:8:8:-:fqdn=fake-node.realm.org,cn=computers,cn=accounts,dc=fake,dc=realm,dc=org:0:0:0
+        # connection: 97:20171228173007Z:3:3:-:cn=Directory Manager:0:0:0
+        # connection: 98:20171228172936Z:5:5:-:cn=Directory Manager:0:0:0
+        # example attribute: 64:20171129175928Z:6:6:-:cn=Directory Manager:0:0:0
+        translator: |
+          {{ range $value := .values }}
+            {{ with splitList ":" $value }}
+            - labels:
+                id: {{ index . 0 }}
+                bind: {{ index . 5 }}
+              value: {{ (index . 1 | toDate "20060102150405Z").Unix }}
+            {{ end }}
+          {{ else }}
+            []
+          {{ end }}
+
+- name: monitor_smnp
+  search: 'cn=snmp,cn=monitor'
+  attributes:
+    metrics:
+      anonymousbinds:
+        type: counter
+      unauthbinds:
+        type: counter
+      simpleauthbinds:
+        type: counter
+      strongauthbinds:
+        type: counter
+      bindsecurityerrors:
+        type: counter
+      inops:
+        type: counter
+      readops:
+        type: counter
+      compareops:
+        type: counter
+      addentryops:
+        type: counter
+      removeentryops:
+        type: counter
+      modifyentryops:
+        type: counter
+      modifyrdnops:
+        type: counter
+      listops:
+        type: counter
+      searchops:
+        type: counter
+      onelevelsearchops:
+        type: counter
+      wholesubtreesearchops:
+        type: counter
+      referrals:
+        type: counter
+      chainings:
+        type: counter
+      securityerrors:
+        type: counter
+      errors:
+        type: counter
+      connections:
+        type: counter
+      connectionseq:
+        type: counter
+      connectionsinmaxthreads:
+        type: counter
+      connectionsmaxthreadscount:
+        type: counter
+      bytesrecv:
+        type: counter
+      bytessent:
+        type: counter
+      entriesreturned:
+        type: counter
+      referralsreturned:
+        type: counter
+      masterentries:
+        type: gauge
+      copyentries:
+        type: gauge
+      cacheentries:
+        type: gauge
+      cachehits:
+        type: counter
+      slavehits:
+        type: counter
+
+
+- &ldbm_definition
+  name: ldbm_root
+  search: 'cn=monitor,cn=userRoot,cn=ldbm database,cn=plugins,cn=config'
+  attributes:
+    metrics:
+      readonly:
+        type: gauge
+      entrycachehits:
+        type: counter
+      entrycachetries:
+        type: counter
+      entrycachehitratio:
+        type: gauge
+      currententrycachesize:
+        type: gauge
+      maxentrycachesize:
+        type: gauge
+      currententrycachecount:
+        type: gauge
+      maxentrycachecount:
+        # value is usually -1 for some reason.
+        type: gauge
+      dncachehits:
+        type: counter
+      dncachetries:
+        type: counter
+      dncachehitratio:
+        type: gauge
+      currentdncachesize:
+        type: gauge
+      maxdncachesize:
+        type: gauge
+      currentdncachecount:
+        type: gauge
+      maxdncachecount:
+        # value is usually -1 for some reason.
+        type: gauge
+      normalizeddncachetries:
+        type: counter
+      normalizeddncachehits:
+        type: counter
+      normalizeddncachemisses:
+        type: counter
+      normalizeddncachehitratio:
+        type: gauge
+      currentnormalizeddncachesize:
+        type: gauge
+      maxnormalizeddncachesize:
+        type: gauge
+      currentnormalizeddncachecount:
+        type: gauge
+
+- <<: *ldbm_definition
+  name: ldbm_changelog
+  search: 'cn=monitor,cn=userRoot,cn=ldbm database,cn=plugins,cn=config'
+
+- name: replication
+  search: cn=config
+  filter: '(objectClass=nsds5replicationagreement)'
+  scope: subtree
+  attributes:
+    labels:
+      # this is the root that is replicated across this toplogy: dc=example,dc=com for example
+      nsDS5ReplicaRoot: replica_root
+      nsDS5ReplicaHost: replica_host
+    metrics:
+      nsds5replicaLastUpdateEnd:
+        type: gauge
+        help: unix timestamp of the last update seen and applied for that host.
+        translator: |
+          - value: {{ (index .values 0 | toDate "20060102150405Z").Unix }}
+      nsds5replicaLastUpdateEnd:
+        type: gauge
+        translator: |
+          - value: {{ (index .values 0 | toDate "20060102150405Z").Unix }}
+      nsds5replicaLastUpdateStart:
+        type: gauge
+        translator: |
+          - value: {{ (index .values 0 | toDate "20060102150405Z").Unix }}
+      nsds5replicaLastUpdateStatus:
+        type: gauge
+        labels: [text]
+        # example: nsds5replicaLastUpdateStatus: Error (0) Replica acquired successfully: Incremental update succeeded
+        translator: |
+          - labels:
+              text: {{ quote .value }}
+            value: {{ regexReplaceAll "Error \\(([0-9]+)\\) .*" .value "${1}" }}
+      nsds5replicareapactive:
+        type: gauge
+
+- name: replication
+  search: ''
+  filter: (objectClass=top)
+  scope: base
+  attributes:
+    metrics:
+      lastusn:
+        type: counter
+      firstchangenumber:
+        type: counter
+      lastchangenumber:
+        type: counter
+      ipaDomainLevel:
+        metric_name: config_ipaDomainLevel
+        type: gauge

@@ -16,7 +16,6 @@ import (
 	"gopkg.in/ldap.v2"
 )
 
-//go:generate go-bindata -o bindata.go data/
 
 var (
 	listen              = flag.String("web.listen-address", ":9095", "The host:port to listen on for HTTP requests")

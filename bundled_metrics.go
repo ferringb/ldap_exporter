@@ -3,9 +3,10 @@ package main
 import (
 	"github.com/prometheus/common/log"
 	"gopkg.in/ldap.v2"
+	"io/ioutil"
 )
 
-//go:generate go-bindata -o bindata.go data/
+//go:generate go run assets/generate.go
 
 func loadBundledMetricsForServer(conn *ldap.Conn) ([]*MetricsSource, error) {
 	// The intent here is to identify the server- if we can- and load any
@@ -33,7 +34,7 @@ func loadBundledMetricsForServer(conn *ldap.Conn) ([]*MetricsSource, error) {
 		for _, ea := range entry.Attributes {
 			if ea.Name == "vendorname" && len(ea.Values) == 1 && ea.Values[0] == "389 Project" {
 				log.Info("Loading bundled metrics for LDAP vendor 389 directory")
-				return loadBundledConfig("data/389.yaml")
+				return loadBundledConfig("389.yaml")
 			}
 		}
 	}
@@ -42,9 +43,13 @@ func loadBundledMetricsForServer(conn *ldap.Conn) ([]*MetricsSource, error) {
 }
 
 func loadBundledConfig(asset_name string) ([]*MetricsSource, error) {
-	data, err := Asset(asset_name)
+	data, err := assets.Open(asset_name)
 	if err != nil {
 		return nil, err
 	}
-	return LoadConfig(string(data))
+	content, err := ioutil.ReadAll(data)
+	if err != nil {
+		return nil, err
+	}
+	return LoadConfig(string(content))
 }

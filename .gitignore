@@ -1,2 +1,2 @@
-./bindata.go
-./ldap-exporter
+/assets_vfsdata.go
+/ldap_exporter

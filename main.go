@@ -16,7 +16,6 @@ import (
 	"gopkg.in/ldap.v2"
 )
 
-
 var (
 	listen              = flag.String("web.listen-address", ":9095", "The host:port to listen on for HTTP requests")
 	metricsPath         = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics")

@@ -161,7 +161,7 @@ func (s *scopeChoice) UnmarshalYAML(unmarshal func(interface{}) error) error {
 		*s = ldap.ScopeWholeSubtree
 		return nil
 	}
-	return fmt.Errorf("ldap search scope %s is unknown; supported options are 'base', 'single', and 'subtree'.  Optionally, you can also use the ldap.v2's naming: %s", choice, ldap.ScopeMap)
+	return fmt.Errorf("ldap search scope %s is unknown; supported options are 'base', 'single', and 'subtree'.  Optionally, you can also use the ldap.v2's naming: %v", choice, ldap.ScopeMap)
 }
 
 type derefChoice int

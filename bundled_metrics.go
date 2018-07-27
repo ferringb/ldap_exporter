@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 )
 
-//go:generate go run assets/generate.go
-
 func loadBundledMetricsForServer(conn *ldap.Conn) ([]*MetricsSource, error) {
 	// The intent here is to identify the server- if we can- and load any
 	// bundled metrics we know of for that server.
@@ -34,7 +32,7 @@ func loadBundledMetricsForServer(conn *ldap.Conn) ([]*MetricsSource, error) {
 		for _, ea := range entry.Attributes {
 			if ea.Name == "vendorname" && len(ea.Values) == 1 && ea.Values[0] == "389 Project" {
 				log.Info("Loading bundled metrics for LDAP vendor 389 directory")
-				return loadBundledConfig("389.yaml")
+				return loadBundledConfig("definitions/389.yaml")
 			}
 		}
 	}

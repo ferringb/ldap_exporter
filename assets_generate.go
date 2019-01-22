@@ -13,7 +13,7 @@ func main() {
 	fs := http.Dir("assets")
 	if err := vfsgen.Generate(fs, vfsgen.Options{
 		PackageName:  "main",
-		BuildTags:    "vfs",
+		BuildTags:    "!dev",
 		VariableName: "assets",
 	}); err != nil {
 		log.Fatalln(err)

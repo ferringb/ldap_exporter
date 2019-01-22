@@ -1,5 +1,7 @@
 package main
 
+//go:generate go run assets_generate.go
+
 import (
 	"github.com/prometheus/common/log"
 	"gopkg.in/ldap.v2"

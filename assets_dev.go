@@ -1,5 +1,4 @@
-// +build !vfs
-//go:generate go run assets_generate.go
+// +build dev
 
 package main
 

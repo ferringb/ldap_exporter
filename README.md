@@ -7,7 +7,7 @@ This exporter allows for configurable tree attributes to be exposed as prometheu
 # Build status
 [![Build Status](https://travis-ci.org/ferringb/ldap_exporter.svg?branch=master)](https://travis-ci.org/ferringb/ldap_exporter)
 
-## Using
+## Usage
 
 ```sh
   -ldap.bind string
@@ -33,3 +33,12 @@ This exporter allows for configurable tree attributes to be exposed as prometheu
   -web.telemetry-path string
     	Path under which to expose metrics (default "/metrics")
 ```
+
+## Developing
+
+This codebase uses vfsgen to manage the bundled queries to run for a given LDAP backend; that content is in assets/definitions/*.yaml.
+
+If you're making changes to those files then you must remember to refresh assets_vfsdata.go via a `go generate` invocation.
+
+If you wish to be able to make changes to the bundled definitions without rebuilding, just use the `-metrics.config` option to pass
+in the bundled metrics you're testing, and pass `-metrics.disable-vendor-metrics` to disable the bundled definitions.

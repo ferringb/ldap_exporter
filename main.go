@@ -25,7 +25,7 @@ var (
 	ldap_tls_key        = flag.String("ldap.tls.key-file", "", "If the server requires a client key, the path to that TLS key.  If this is passed, -ldap.tls.cert-file must also be passed")
 	ldap_tls_skipVerify = flag.Bool("ldap.tls.skip-verify", false, "If given, do not do any verification of the server's cert.  Insecure and allows for MITM")
 	ldap_bind           = flag.String("ldap.bind", "", "Ldap DN to bind to")
-	ldap_password       = flag.String("ldap.password", os.Getenv("LDAP_PASSWORD"), "LDAP bind DN password")
+	ldap_password       = flag.String("ldap.password", os.Getenv("LDAP_PASSWORD"), "LDAP bind DN password.  Can be configured via the environment variable LDAP_PASSWORD")
 
 	disableVendorMetrics = flag.Bool("metrics.disable-vendor-metrics", false, "By default, try to identify the LDAP vendor and load metrics for thhat vendor.  If the vendor cannot be identified or if this is enabled,, -metrics.config must be set.")
 	queryFile            = flag.String("metrics.config", "", "YAML file holding ldap -> metrics queries.  Note if the LDAP vendor cannot be identified, this must be set")

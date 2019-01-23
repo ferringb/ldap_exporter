@@ -10,11 +10,10 @@ This exporter allows for configurable tree attributes to be exposed as prometheu
 ## Using
 
 ```sh
-Usage of ./ldap-exporter:
   -ldap.bind string
     	Ldap DN to bind to
   -ldap.password string
-    	LDAP bind DN password
+    	LDAP bind DN password.  Can be configured via the environment variable LDAP_PASSWORD
   -ldap.tls-ca-file string
     	If TLS is used, the path for to CA to use
   -ldap.tls.cert-file string
@@ -25,10 +24,6 @@ Usage of ./ldap-exporter:
     	If given, do not do any verification of the server's cert.  Insecure and allows for MITM
   -ldap.uri string
     	Openldap compatible URI to connect to.  Can use ldap://, ldaps://, ldapi://
-  -log.format value
-    	Set the log target and format. Example: "logger:syslog?appname=bob&local=7" or "logger:stdout?json=true" (default "logger:stderr")
-  -log.level value
-    	Only log messages with the given severity or above. Valid levels: [debug, info, warn, error, fatal] (default "info")
   -metrics.config string
     	YAML file holding ldap -> metrics queries.  Note if the LDAP vendor cannot be identified, this must be set
   -metrics.disable-vendor-metrics

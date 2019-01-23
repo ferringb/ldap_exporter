@@ -10,16 +10,19 @@ This exporter allows for configurable tree attributes to be exposed as prometheu
 ## Usage
 
 ```sh
+Usage of ./ldap_exporter:
   -ldap.bind string
     	Ldap DN to bind to
   -ldap.password string
     	LDAP bind DN password.  Can be configured via the environment variable LDAP_PASSWORD
-  -ldap.tls-ca-file string
+  -ldap.tls.ca-file string
     	If TLS is used, the path for to CA to use
   -ldap.tls.cert-file string
     	If the server requires a client cert, the path to that TLS cert.  If this is passed, -ldap.tls.key-file must also be passed
   -ldap.tls.key-file string
     	If the server requires a client key, the path to that TLS key.  If this is passed, -ldap.tls.cert-file must also be passed
+  -ldap.tls.server-name string
+    	If specified, expect this name for TLS handshakes rather than using the hostname parsed from -ldap.uri
   -ldap.tls.skip-verify
     	If given, do not do any verification of the server's cert.  Insecure and allows for MITM
   -ldap.uri string

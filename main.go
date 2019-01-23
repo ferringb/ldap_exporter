@@ -20,9 +20,10 @@ var (
 	listen              = flag.String("web.listen-address", ":9095", "The host:port to listen on for HTTP requests")
 	metricsPath         = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics")
 	ldap_uri            = flag.String("ldap.uri", "", "Openldap compatible URI to connect to.  Can use ldap://, ldaps://, ldapi://")
-	ldap_tls_ca         = flag.String("ldap.tls-ca-file", "", "If TLS is used, the path for to CA to use")
+	ldap_tls_ca         = flag.String("ldap.tls.ca-file", "", "If TLS is used, the path for to CA to use")
 	ldap_tls_cert       = flag.String("ldap.tls.cert-file", "", "If the server requires a client cert, the path to that TLS cert.  If this is passed, -ldap.tls.key-file must also be passed")
 	ldap_tls_key        = flag.String("ldap.tls.key-file", "", "If the server requires a client key, the path to that TLS key.  If this is passed, -ldap.tls.cert-file must also be passed")
+	ldap_tls_serverName = flag.String("ldap.tls.server-name", "", "If specified, expect this name for TLS handshakes rather than using the hostname parsed from -ldap.uri")
 	ldap_tls_skipVerify = flag.Bool("ldap.tls.skip-verify", false, "If given, do not do any verification of the server's cert.  Insecure and allows for MITM")
 	ldap_bind           = flag.String("ldap.bind", "", "Ldap DN to bind to")
 	ldap_password       = flag.String("ldap.password", os.Getenv("LDAP_PASSWORD"), "LDAP bind DN password.  Can be configured via the environment variable LDAP_PASSWORD")
@@ -66,7 +67,7 @@ func createTLSConfigFromFlags() (*tls.Config, error) {
 	return config, nil
 }
 
-func createLdapClientFromFlags(ldap_uri string, tls_config *tls.Config) (*ldap.Conn, error) {
+func createLdapClientFromFlags(ldap_uri string, serverName string, tls_config *tls.Config) (*ldap.Conn, error) {
 	if ldap_uri == "" {
 		return nil, fmt.Errorf("-ldap.uri is a required argument")
 	}
@@ -88,6 +89,12 @@ func createLdapClientFromFlags(ldap_uri string, tls_config *tls.Config) (*ldap.C
 		if port == "" {
 			port = "636"
 		}
+		// This should be handled by createTLSConfigFromFlags...
+		if serverName != "" {
+			tls_config.ServerName = serverName
+		} else {
+			tls_config.ServerName = u.Hostname()
+		}
 		return ldap.DialTLS("tcp", net.JoinHostPort(u.Hostname(), port), tls_config)
 	}
 	return nil, fmt.Errorf("unsupported ldap scheme %v", u.Scheme)
@@ -100,7 +107,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	client, err := createLdapClientFromFlags(*ldap_uri, tls_config)
+	client, err := createLdapClientFromFlags(*ldap_uri, *ldap_tls_serverName, tls_config)
 	if err != nil {
 		log.Fatal(err)
 	}

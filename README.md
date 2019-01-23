@@ -4,6 +4,8 @@ A [Prometheus](http://prometheus.io) metrics exporter for [LDAP](https://en.wiki
 
 This exporter allows for configurable tree attributes to be exposed as prometheus metrics, and bundles a set of useful metrics for LDAP backends it knows of (currently this is just [389 Directory Server](http://directory.fedoraproject.org/)).
 
+# Build status
+[![Build Status](https://travis-ci.org/ferringb/ldap_exporter.svg?branch=master)](https://travis-ci.org/ferringb/ldap_exporter)
 
 ## Using
 

@@ -13,6 +13,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/log"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"gopkg.in/ldap.v2"
 )
 
@@ -158,6 +159,6 @@ func main() {
 	prometheus.MustRegister(e)
 
 	log.Infof("starting server; telemetry accessible at %s%s", *listen, *metricsPath)
-	http.Handle(*metricsPath, prometheus.Handler())
+	http.Handle(*metricsPath, promhttp.Handler())
 	log.Fatal(http.ListenAndServe(*listen, nil))
 }

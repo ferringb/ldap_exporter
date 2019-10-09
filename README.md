@@ -9,7 +9,7 @@ This exporter allows for configurable tree attributes to be exposed as prometheu
 
 ## Install 
 
-`go get -u -v github.com/ferringb/ldap_exporter`
+`go get -u github.com/ferringb/ldap_exporter`
 
 ## Usage
 

@@ -7,6 +7,10 @@ This exporter allows for configurable tree attributes to be exposed as prometheu
 # Build status
 [![Build Status](https://travis-ci.org/ferringb/ldap_exporter.svg?branch=master)](https://travis-ci.org/ferringb/ldap_exporter)
 
+## Install 
+
+`go get -u github.com/ferringb/ldap_exporter`
+
 ## Usage
 
 ```sh

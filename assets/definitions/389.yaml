@@ -245,3 +245,15 @@
       ipaDomainLevel:
         metric_name: config_ipaDomainLevel
         type: gauge
+
+- name: posix_ids
+  search: 'cn=Posix IDs,cn=Distributed Numeric Assignment Plugin,cn=plugins,cn=config'
+  scope: base
+  attributes:
+    metrics:
+      dnaMaxValue:
+        metric_name: posix_ids_max_value
+        type: gauge
+      dnaNextValue:
+        metric_name: posix_ids_next_value
+        type: gauge
